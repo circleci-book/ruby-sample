@@ -1,0 +1,65 @@
+{
+  "RSpec": {
+    "coverage": {
+      "/sample-app/app/helpers/application_helper.rb": [
+        1,
+        null
+      ],
+      "/sample-app/app/models/user.rb": [
+        1,
+        1,
+        null
+      ],
+      "/sample-app/app/models/application_record.rb": [
+        1,
+        1,
+        null
+      ],
+      "/sample-app/app/controllers/application_controller.rb": [
+        1,
+        null
+      ],
+      "/sample-app/app/controllers/users_controller.rb": [
+        1,
+        1,
+        1,
+        null,
+        null
+      ],
+      "/sample-app/app/controllers/welcome_controller.rb": [
+        1,
+        1,
+        null,
+        null
+      ],
+      "/sample-app/app/mailers/application_mailer.rb": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "/sample-app/app/jobs/application_job.rb": [
+        0,
+        null,
+        null,
+        null,
+        null,
+        null,
+        0
+      ],
+      "/sample-app/app/channels/application_cable/connection.rb": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "/sample-app/app/channels/application_cable/channel.rb": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "timestamp": 1576815516
+  }
+}

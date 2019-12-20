@@ -1,0 +1,100 @@
+version: 2
+jobs:
+  build_and_test:
+    parallelism: 3
+    docker:
+      - image: circleci/ruby:2.6.5-node
+      - image: circleci/postgres:9.6.9-alpine
+    environment:
+      BUNDLE_JOBS: 3
+      BUNDLE_RETRY: 3
+      BUNDLE_PATH: vendor/bundle
+      POSTGRES_HOST: localhost
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: ''
+      RAILS_ENV: test
+    steps:
+    - checkout
+    - restore_cache:
+        keys:
+        - rails-bundle-v1-{{ checksum "Gemfile.lock" }}
+        - rails-bundle-v1-
+    - run:
+        name: Bundle Install
+        command: bundle check || bundle install
+    - save_cache:
+        key: rails-bundle-v1-{{ checksum "Gemfile.lock" }}
+        paths:
+        - vendor/bundle
+    - restore_cache:
+        keys:
+        - rails-yarn-v2-{{ checksum "yarn.lock" }}
+        - rails-yarn-v2-
+    - run:
+        name: Yarn Install
+        command: yarn install
+    - save_cache:
+        key: rails-yarn-v2-{{ checksum "yarn.lock" }}
+        paths:
+        - ~/.cache/yarn
+    - run:
+        name: Waiting for DB to be ready
+        command: |
+          for i in `seq 1 10`;
+          do
+            nc -z localhost 5432 && echo Success && exit 0
+            echo -n .
+            sleep 1
+          done
+          echo Failed waiting for DB && exit 1
+    - run:
+        name: Database setup
+        command: bin/rails db:schema:load --trace
+    - run:
+        name: Run rspec in parallel
+        command: |
+          TEST_FILES=$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+          cat $TEST_FILES
+          bundle exec rspec --format RspecJunitFormatter \
+                            --out test_results/rspec.xml \
+                            $TEST_FILES
+    - run:
+        name: Stash Coverage Results
+        command: |
+          mkdir coverage_results
+          cp coverage/.resultset.json coverage_results/.resultset-${CIRCLE_NODE_INDEX}.json
+    - store_test_results:
+        path: test_results
+    - store_artifacts:
+        path: coverage
+    - persist_to_workspace:
+        root: ~/project
+        paths:
+          - vendor/bundle
+          - coverage_results
+  coverage:
+    docker:
+      - image: circleci/ruby:2.6.5-node
+    environment:
+      BUNDLE_PATH: vendor/bundle
+      RAILS_ENV: test
+    steps:
+      - checkout
+      - attach_workspace:
+            at: ~/project
+      - run: bundle install
+      - run:
+          name: Merge Coverage Results
+          command: |
+            bundle exec rake simplecov:merge_results
+      - store_artifacts:
+          path: coverage
+workflows:
+  version: 2
+  main:
+    jobs:
+    - build_and_test
+    - coverage:
+        requires:
+            - build_and_test
