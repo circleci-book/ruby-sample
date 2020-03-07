@@ -41,13 +41,7 @@ jobs:
       - run:
           name: データベースの起動を待機
           command: |
-            for i in `seq 1 10`;
-            do
-              nc -z localhost 5432 && echo Success && exit 0
-              echo -n .
-              sleep 1
-            done
-            echo Failed waiting for DB && exit 1
+            dockerize -wait tcp://localhost:5432 -timeout 1m
       - run:
           name: データベースのセットアップ
           command: bin/rails db:schema:load --trace
