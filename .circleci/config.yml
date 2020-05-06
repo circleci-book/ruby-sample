@@ -58,8 +58,6 @@ jobs:
             cp coverage/.resultset.json coverage_results/.resultset-${CIRCLE_NODE_INDEX}.json
       - store_test_results:
           path: test_results
-      - store_artifacts:
-          path: coverage
       - persist_to_workspace:
           root: ~/project
           paths:
