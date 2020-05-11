@@ -51,13 +51,13 @@ jobs:
             bundle exec rspec --format RspecJunitFormatter \
                               --out test_results/rspec.xml \
                               $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+      - store_test_results:
+          path: test_results
       - run:
           name: カバレッジレポートをアップロードする準備
           command: |
             mkdir coverage_results
             cp coverage/.resultset.json coverage_results/.resultset-${CIRCLE_NODE_INDEX}.json
-      - store_test_results:
-          path: test_results
       - persist_to_workspace:
           root: ~/project
           paths:
