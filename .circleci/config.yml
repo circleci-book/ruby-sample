@@ -87,4 +87,4 @@ workflows:
     - build_and_test
     - coverage:
         requires:
-            - build_and_test
+          - build_and_test
