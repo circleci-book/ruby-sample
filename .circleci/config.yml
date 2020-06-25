@@ -21,7 +21,7 @@ jobs:
           - rails-bundle-v1-{{ checksum "Gemfile.lock" }}
           - rails-bundle-v1-
       - run:
-          name: Gems依存関係のインストール
+          name: gem依存関係のインストール
           command: bundle check || bundle install
       - save_cache:
           key: rails-bundle-v1-{{ checksum "Gemfile.lock" }}
@@ -29,13 +29,13 @@ jobs:
           - vendor/bundle
       - restore_cache:
           keys:
-          - rails-yarn-v2-{{ checksum "yarn.lock" }}
-          - rails-yarn-v2-
+          - rails-yarn-v1-{{ checksum "yarn.lock" }}
+          - rails-yarn-v1-
       - run:
           name: node_modules依存関係のインストール
           command: yarn install
       - save_cache:
-          key: rails-yarn-v2-{{ checksum "yarn.lock" }}
+          key: rails-yarn-v1-{{ checksum "yarn.lock" }}
           paths:
           - ~/.cache/yarn
       - run:
@@ -87,4 +87,4 @@ workflows:
     - build_and_test
     - coverage:
         requires:
-            - build_and_test
+          - build_and_test
