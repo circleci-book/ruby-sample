@@ -76,6 +76,9 @@ jobs:
       - checkout
       - attach_workspace:
             at: ~/project
+      - run:
+          name: pg gemの依存関係のインストール
+          command: sudo apt-get update; sudo apt-get install libpq-dev
       - run: bundle install
       - run:
           name: カバレッジレポートをマージ
