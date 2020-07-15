@@ -21,6 +21,9 @@ jobs:
           - rails-bundle-v1-{{ checksum "Gemfile.lock" }}
           - rails-bundle-v1-
       - run:
+          name: pg gemの依存関係のインストール
+          command: sudo apt-get update; sudo apt-get install libpq-dev
+      - run:
           name: gem依存関係のインストール
           command: bundle check || bundle install
       - save_cache:
